@@ -12,6 +12,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static team.unibusk.backend.global.exception.GlobalExceptionCode.INVALID_INPUT;
@@ -41,6 +42,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     ) {
         String message = exception.getAllErrors().stream()
                 .map(MessageSourceResolvable::getDefaultMessage)
+                .filter(Objects::nonNull)
                 .collect(Collectors.joining(", "));
 
         ExceptionResponse response = ExceptionResponse.of(
