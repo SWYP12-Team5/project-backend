@@ -8,8 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+import team.unibusk.backend.global.auth.application.auth.AuthService;
 import team.unibusk.backend.global.auth.application.dto.response.OauthLoginResultResponse;
-import team.unibusk.backend.global.auth.application.login.OAuthLoginService;
 import team.unibusk.backend.global.auth.domain.user.CustomOAuth2User;
 import team.unibusk.backend.global.auth.presentation.exception.AlreadyRegisteredMemberException;
 import team.unibusk.backend.global.jwt.config.SecurityProperties;
@@ -19,14 +19,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static team.unibusk.backend.global.auth.presentation.security.RedirectUrlFilter.REDIRECT_URL_COOKIE_NAME;
 import static team.unibusk.backend.global.auth.presentation.exception.AuthExceptionCode.ALREADY_REGISTERED_MEMBER;
+import static team.unibusk.backend.global.auth.presentation.security.RedirectUrlFilter.REDIRECT_URL_COOKIE_NAME;
 
 @RequiredArgsConstructor
 @Component
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
-    private final OAuthLoginService oAuth2LoginService;
+    private final AuthService authService;
     private final TokenInjector tokenInjector;
     private final SecurityProperties securityProperties;
 
@@ -47,7 +47,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private OauthLoginResultResponse resolveLoginResultFromAuthentication(Authentication authentication) {
         CustomOAuth2User oAuth2User = (CustomOAuth2User)authentication.getPrincipal();
-        return oAuth2LoginService.handleLoginSuccess(oAuth2User.getAuthAttributes());
+        return authService.handleLoginSuccess(oAuth2User.getAuthAttributes());
     }
 
     private void redirectToSuccessUrl(
@@ -56,7 +56,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             OauthLoginResultResponse result
     ) throws IOException {
         String redirectUrlByCookie = getRedirectUrlByCookie(request);
-        String redirectUrl = determineRedirectUrl(redirectUrlByCookie, result.isFirstLogin());
+        String redirectUrl = determineRedirectUrl(redirectUrlByCookie);
         response.sendRedirect(redirectUrl);
         tokenInjector.invalidateCookie(REDIRECT_URL_COOKIE_NAME, response);
     }
@@ -69,7 +69,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 .orElse(null);
     }
 
-    private String determineRedirectUrl(String redirectCookie, boolean isFirstLogin) {
+    private String determineRedirectUrl(String redirectCookie) {
         if (StringUtils.hasText(redirectCookie)) {
             return redirectCookie;
         }

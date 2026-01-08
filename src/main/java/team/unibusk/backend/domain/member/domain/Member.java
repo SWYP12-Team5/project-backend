@@ -5,6 +5,8 @@ import lombok.*;
 import team.unibusk.backend.global.auth.application.attributes.AuthAttributes;
 import team.unibusk.backend.global.domain.BaseTimeEntity;
 
+import java.util.Objects;
+
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,17 +39,12 @@ public class Member extends BaseTimeEntity {
                 .build();
     }
 
-    public boolean isRegisteredWithDifferentProvider(LoginProvider provider) {
-        return this.provider != provider;
+    public void generateName(String name) {
+        this.name = name;
     }
 
-    public void markAsFirstLogin() {
-        this.firstLogin = true;
+    public boolean hasDifferentProviderWithEmail(String email, String externalId) {
+        return Objects.equals(this.email, email) && !Objects.equals(this.externalId, externalId);
     }
-
-    public void markAsNotFirstLogin() {
-        this.firstLogin = false;
-    }
-
 
 }
