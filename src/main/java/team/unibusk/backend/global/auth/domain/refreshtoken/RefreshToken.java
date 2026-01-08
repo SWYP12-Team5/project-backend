@@ -40,10 +40,8 @@ public class RefreshToken extends BaseTimeEntity {
         this.token = token;
     }
 
-    public void updateExpirationIfExpired(long expiredSeconds) {
-        if (isExpired()) {
-            expiredAt = LocalDateTime.now().plusSeconds(expiredSeconds);
-        }
+    public void updateExpiration(long expiredSeconds) {
+        expiredAt = LocalDateTime.now().plusSeconds(expiredSeconds);
     }
 
     public void validateWith(String token, Long memberId) {

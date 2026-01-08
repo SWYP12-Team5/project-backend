@@ -36,7 +36,7 @@ public class RefreshTokenReissueService {
     private String rotateRefreshToken(RefreshToken refreshToken) {
         String reissuedToken = tokenGenerator.generateRefreshToken(refreshToken.getMemberId());
         refreshToken.rotate(reissuedToken);
-        refreshToken.updateExpirationIfExpired(tokenProperties.expirationTime().refreshToken());
+        refreshToken.updateExpiration(tokenProperties.expirationTime().refreshToken());
         return reissuedToken;
     }
 
