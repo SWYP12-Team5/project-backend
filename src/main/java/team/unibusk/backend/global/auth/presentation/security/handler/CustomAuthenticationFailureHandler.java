@@ -28,14 +28,13 @@ public class CustomAuthenticationFailureHandler extends SimpleUrlAuthenticationF
             HttpServletRequest request,
             HttpServletResponse response,
             AuthenticationException exception
-    ) throws IOException, ServletException {
+    ) throws IOException {
         log.warn("Authentication failure: {}", exception.getMessage());
 
         String exceptionParam = URLEncoder.encode(String.valueOf(AUTHENTICATION_REQUIRED), StandardCharsets.UTF_8);
+        String failureUrl = securityProperties.oAuthUrl().loginUrl() + "?error=true&exception=" + exceptionParam;
 
-        super.setDefaultFailureUrl(securityProperties.oAuthUrl().loginUrl() + "?error=true&exception=" + exceptionParam);
-
-        super.onAuthenticationFailure(request, response, exception);
+        getRedirectStrategy().sendRedirect(request, response, failureUrl);
     }
 
 }
