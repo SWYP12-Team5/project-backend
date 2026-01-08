@@ -16,6 +16,8 @@ import team.unibusk.backend.global.jwt.config.SecurityProperties;
 import team.unibusk.backend.global.jwt.injector.TokenInjector;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -71,13 +73,20 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private String determineRedirectUrl(String redirectCookie) {
         if (StringUtils.hasText(redirectCookie)) {
-            return redirectCookie;
+            String decodedUrl = URLDecoder.decode(redirectCookie, StandardCharsets.UTF_8);
+            if (isValidRedirectUrl(decodedUrl)) {
+                return decodedUrl;
+            }
         }
         return securityProperties.oAuthUrl().redirectUrl();
     }
 
     private void handleAlreadyExistUser(HttpServletResponse response) throws IOException {
         response.sendRedirect(securityProperties.oAuthUrl().loginUrl() + "?error=true&exception=" + ALREADY_REGISTERED_MEMBER);
+    }
+
+    private boolean isValidRedirectUrl(String url) {
+        return url.startsWith("/") || url.startsWith(securityProperties.oAuthUrl().redirectUrl());
     }
 
 }
