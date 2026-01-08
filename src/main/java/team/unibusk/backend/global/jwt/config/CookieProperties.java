@@ -6,7 +6,9 @@ public record CookieProperties(
 
         boolean httpOnly,
 
-        boolean secure
+        boolean secure,
+
+        String sameSite
 
 ) {
 }
