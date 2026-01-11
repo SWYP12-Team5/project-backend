@@ -1,4 +1,4 @@
-package team.unibusk.backend.domain.member.application.response;
+package team.unibusk.backend.domain.member.application.dto.response;
 
 import lombok.Builder;
 import team.unibusk.backend.domain.member.domain.Member;

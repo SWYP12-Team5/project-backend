@@ -47,4 +47,8 @@ public class Member extends BaseTimeEntity {
         return Objects.equals(this.email, email) && !Objects.equals(this.externalId, externalId);
     }
 
+    public void updateName(String name) {
+        this.name = name;
+    }
+
 }
